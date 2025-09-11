@@ -28,13 +28,15 @@ Follow these steps to set up the local development environment.
     
 2.  Create and activate the Conda environment: `conda create --name pcd_visual python=3.10` `conda activate pcd_visual`
     
-3.  Install the required Python packages: `pip install -r requirements.txt`
+3.  Install the required Python packages: 
+
+    pip install -r requirements.txt
 
 4.  (Optional) On some Linux systems, a conflict can occur between the system's C++ library and the one inside the Conda environment. This may prevent the visualization window from opening. C++ Library Error on Linux (`libstdc++.so.6`)
 
 To fix this for your current terminal session, run the following command **before** running the script:
 
-    `export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6`
+    export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 
 Note that this command is temporary and must be run again if you open a new terminal.
 
