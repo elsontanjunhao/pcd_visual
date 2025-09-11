@@ -8,12 +8,10 @@
 # 1. Open3D: A modern library for 3D data processing. It's used here for
 #    pointcloud data structures, visualization, and geometric processing,
 #    including clustering and bounding box creation.
-#    - Website: http://www.open3d.org/
 #
 # 2. NumPy: The fundamental package for scientific computing in Python. It's
 #    used for efficient array operations, particularly for handling the
 #    pointcloud data read from the binary file.
-#    - Website: https://numpy.org/
 # ==============================================================================
 
 import open3d as o3d
@@ -55,7 +53,7 @@ def main():
     stat_outlier_std_ratio = 2.0        # Standard deviation ratio for statistical outlier removal.
     
     # --- Ground Plane (RANSAC) Parameters ---
-    ransac_distance_threshold = 0.2     # Max distance a point can be from the plane model.
+    ransac_distance_threshold = 0.3     # Max distance a point can be from the plane model.
     ransac_n = 3                        # Number of points to sample for a plane.
     ransac_num_iterations = 5000        # Number of RANSAC iterations.
 
