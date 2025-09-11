@@ -6,13 +6,13 @@
 # This script utilizes the following Python libraries:
 #
 # 1. Open3D: A modern library for 3D data processing. It's used here for
-#    point cloud data structures, visualization, and geometric processing,
+#    pointcloud data structures, visualization, and geometric processing,
 #    including clustering and bounding box creation.
 #    - Website: http://www.open3d.org/
 #
 # 2. NumPy: The fundamental package for scientific computing in Python. It's
 #    used for efficient array operations, particularly for handling the
-#    point cloud data read from the binary file.
+#    pointcloud data read from the binary file.
 #    - Website: https://numpy.org/
 # ==============================================================================
 
@@ -20,9 +20,9 @@ import open3d as o3d
 import numpy as np
 import struct
 
-def read_point_cloud(file_path):
+def read_pointcloud(file_path):
     """
-    Reads a .bin file containing point cloud data.
+    Reads a .bin file containing pointcloud data.
     The data is expected to be in XYZI (x, y, z, intensity) format.
     The intensity value is discarded, and only XYZ is returned.
     """
@@ -40,104 +40,122 @@ def read_point_cloud(file_path):
 
 def main():
     """
-    Main function to load, process, and visualize the point cloud data.
+    Main function to load, process, and visualize the pointcloud data.
     """
+    # ==============================================================================
+    # Configuration Parameters
+    # ==============================================================================
+    # --- Input File ---
+    file_path = '0000000001.bin'
+
+    # --- Pre-processing Parameters ---
+    distance_crop_threshold = 50.0      # Max distance in meters from center to keep points.
+    voxel_size = 0.02                    # Voxel size for downsampling in meters.
+    stat_outlier_num_neighbors = 20     # Number of neighbors for statistical outlier removal.
+    stat_outlier_std_ratio = 2.0        # Standard deviation ratio for statistical outlier removal.
+    
+    # --- Ground Plane (RANSAC) Parameters ---
+    ransac_distance_threshold = 0.2     # Max distance a point can be from the plane model.
+    ransac_n = 3                        # Number of points to sample for a plane.
+    ransac_num_iterations = 5000        # Number of RANSAC iterations.
+
+    # --- Clustering (DBSCAN) Parameters ---
+    dbscan_eps = 0.35                    # Epsilon value (neighborhood distance).
+    dbscan_min_points = 5               # Minimum points to form a cluster.
+    # ==============================================================================
+
     # ==============================================================================
     # Data Pre-processing
     # ==============================================================================
     # The pre-processing in this script involves the following steps:
     #
     # 1. Loading the Data:
-    #    - The point cloud data is loaded from a binary file ('0000000001.bin').
-    #    - We assume the data is stored as a sequence of 32-bit floats.
-    #    - Each point consists of four floats: X, Y, Z coordinates, and an
-    #      intensity value. The intensity value is ignored for this visualization.
+    #    - The pointcloud data is loaded from the binary file specified above.
     #
-    # 2. Data Conversion:
-    #    - The raw XYZ data (as a NumPy array) is converted into an Open3D
-    #      PointCloud object. This is the primary data structure used by the
-    #      Open3D library for any subsequent processing and visualization.
+    # 2. Distance Cropping:
+    #    - Points that are excessively far from the center of the entire scene
+    #      are removed to focus processing on the area of interest.
+    #
+    # 3. Voxel Downsampling:
+    #    - The point cloud is downsampled to reduce the number of points and
+    #      create a more uniform point density.
+    #
+    # 4. Statistical Outlier Removal:
+    #    - Sparse outliers are removed to clean up noise from sensor errors.
+    #
+    # 5. Ground Plane Removal:
+    #    - The RANSAC algorithm is used to identify and remove the ground plane.
     # ==============================================================================
 
-    # Load the point cloud data from the specified file
-    file_path = '0000000001.bin'
-    points = read_point_cloud(file_path)
+    points = read_pointcloud(file_path)
 
-    # Create an Open3D PointCloud object
     pcd = o3d.geometry.PointCloud()
     pcd.points = o3d.utility.Vector3dVector(points)
+    
+    # --- Crop points that are too far from the pointcloud center ---
+    pcd_center = pcd.get_center()
+    distances = np.linalg.norm(np.asarray(pcd.points) - pcd_center, axis=1)
+    nearby_indices = np.where(distances < distance_crop_threshold)[0]
+    pcd_cropped = pcd.select_by_index(nearby_indices)
+
+    # --- Downsample the cropped pointcloud ---
+    pcd_down = pcd_cropped.voxel_down_sample(voxel_size)
+    
+    # --- Remove sparse outliers from the downsampled pointcloud ---
+    pcd_filtered, _ = pcd_down.remove_statistical_outlier(
+        nb_neighbors=stat_outlier_num_neighbors,
+        std_ratio=stat_outlier_std_ratio
+    )
+
+    # --- Ground Plane Removal using RANSAC ---
+    plane_model, inlier_indices = pcd_filtered.segment_plane(
+        distance_threshold=ransac_distance_threshold,
+        ransac_n=ransac_n,
+        num_iterations=ransac_num_iterations
+    )
+    
+    pcd_objects = pcd_filtered.select_by_index(inlier_indices, invert=True)
+    ground_plane = pcd_filtered.select_by_index(inlier_indices)
+    ground_plane.paint_uniform_color([0.5, 0.5, 0.5])
 
     # ==============================================================================
-    # Point Cloud Clustering Model
+    # PointCloud Clustering Model
     # ==============================================================================
-    # For clustering the point cloud and identifying distinct objects, we use
-    # the Density-Based Spatial Clustering of Applications with Noise (DBSCAN)
-    # algorithm.
-    #
-    # - Model Used: open3d.geometry.PointCloud.cluster_dbscan
-    #
-    # - Why DBSCAN?
-    #   - It does not require the number of clusters to be specified beforehand,
-    #     which is ideal for surveillance applications where the number of
-    #     objects is unknown and variable.
-    #   - It can identify arbitrarily shaped clusters and is robust to noise
-    #     (points that don't belong to any cluster).
-    #
-    # - Parameters:
-    #   - eps (epsilon): The maximum distance between two points for one to be
-    #     considered as in the neighborhood of the other. This parameter defines
-    #     the density of clusters. We'll use a value of 0.5.
-    #   - min_points: The minimum number of points required to form a dense
-    #     region (a cluster). We'll set this to 10.
+    # Using the Density-Based Spatial Clustering of Applications with Noise (DBSCAN)
+    # algorithm to identify distinct objects in the scene.
     # ==============================================================================
 
-    # Perform DBSCAN clustering
-    # You may need to tune 'eps' and 'min_points' for different datasets
-    labels = np.array(pcd.cluster_dbscan(eps=0.5, min_points=10, print_progress=True))
+    labels = np.array(pcd_objects.cluster_dbscan(
+        eps=dbscan_eps, 
+        min_points=dbscan_min_points, 
+        print_progress=True
+    ))
 
-    # Get the unique cluster labels, ignoring noise (-1)
     max_label = labels.max()
-    print(f"Point cloud has {max_label + 1} clusters")
+    print(f"Pointcloud has {max_label + 1} clusters")
 
     # ==============================================================================
     # Object Detection and 3D Bounding Boxes
     # ==============================================================================
-    # Object detection in this context is achieved by the clustering process.
-    # Each cluster of points is considered a detected object.
-    #
-    # - Model Used: No pre-trained deep learning model is used. Object detection
-    #   is based on the geometric clustering (DBSCAN) of the point cloud.
-    #
-    # - Bounding Box Generation:
-    #   - For each cluster identified by DBSCAN, we generate an axis-aligned
-    #     bounding box using `open3d.geometry.PointCloud.get_axis_aligned_bounding_box`.
-    #   - These bounding boxes are then added to the list of geometries to be
-    #     visualized alongside the point cloud.
+    # Bounding boxes are generated for each cluster found by DBSCAN.
     # ==============================================================================
 
-    # Create a list to hold the bounding boxes for visualization
+    colors = np.random.rand(max_label + 2, 3)
+    colors[-1] = [0, 0, 0]
+    pcd_objects.colors = o3d.utility.Vector3dVector(colors[labels])
+
     bounding_boxes = []
-    # Assign a unique color to each cluster for better visualization
-    # We use a simple color map for this demonstration
-    colors = np.random.rand(max_label + 1, 3)
-    colors[0] = [0, 0, 0] # Noise points will be black if we decide to show them
-    pcd.colors = o3d.utility.Vector3dVector(colors[labels])
-
-
     for i in range(max_label + 1):
-        # Select points belonging to the current cluster
         cluster_indices = np.where(labels == i)[0]
-        cluster_points = pcd.select_by_index(cluster_indices)
-
-        if len(cluster_points.points) > 0:
-            # Create an axis-aligned bounding box for the cluster
+        if len(cluster_indices) > 0:
+            cluster_points = pcd_objects.select_by_index(cluster_indices)
             bbox = cluster_points.get_axis_aligned_bounding_box()
-            bbox.color = (1, 0, 0) # Set bounding box color to red
+            bbox.color = (1, 0, 0)
             bounding_boxes.append(bbox)
 
-    # Visualize the point cloud with bounding boxes
-    # The original point cloud 'pcd' is included to show all points
-    o3d.visualization.draw_geometries([pcd] + bounding_boxes)
+    # Visualize the scene
+    o3d.visualization.draw_geometries([ground_plane, pcd_objects] + bounding_boxes)
 
 if __name__ == "__main__":
     main()
+
