@@ -57,7 +57,7 @@ Note that this command is temporary and must be run again if you open a new term
 python lidar_visualization.py
 ```        
     
-    An Open3D window will open, displaying the point cloud and the detected bounding boxes.
+An Open3D window will open, displaying the pointcloud and the detected bounding boxes.
 
 ## Tested Environment Specifications
 This project was successfully tested on the following system configuration:
