@@ -26,13 +26,14 @@ Follow these steps to set up the local development environment.
 
 1.  Clone the repository and change into the new directory: 
 
-    git clone https://github.com/elsontanjunhao/pcd_visual.git
-    cd pcd_visual
+        git clone https://github.com/elsontanjunhao/pcd_visual.git
+        cd pcd_visual
     
 2.  Create and activate the Conda environment: 
 
-    conda create --name pcd_visual python=3.10
-    conda activate pcd_visual
+        conda create --name pcd_visual python=3.10
+
+        conda activate pcd_visual
     
 3.  Install the required Python packages: 
 
@@ -42,7 +43,7 @@ Follow these steps to set up the local development environment.
 
 To fix this for your current terminal session, run the following command **before** running the script:
 
-    export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
+        export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libstdc++.so.6
 
 Note that this command is temporary and must be run again if you open a new terminal.
 
