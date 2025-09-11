@@ -19,7 +19,7 @@ Follow these steps to set up the local development environment.
 
 ### Prerequisites
 
-*   [Miniconda](https://docs.conda.io/en/latest/miniconda.html "null") or [Anaconda](https://www.anaconda.com/products/distribution "null") must be installed.
+*   [Miniconda](https://docs.conda.io/en/latest/miniconda.html) or [Anaconda](https://www.anaconda.com/products/distribution) should be installed.
     
 
 ### Installation Steps
@@ -38,7 +38,7 @@ conda activate pcd_visual
 ```
 pip install -r requirements.txt
 ```
-4.  (Optional) On some Linux systems, a conflict can occur between the system's C++ library and the one inside the Conda environment. This may prevent the visualization window from opening. C++ Library Error on Linux (`libstdc++.so.6`)
+4.  (Optional) Troubleshooting for Linux: On some Linux systems, a conflict can occur with the C++ library (libstdc++.so.6), which may prevent the visualization window from opening. To fix this for the current terminal session, run the following command before running the script:
 
 To fix this for your current terminal session, run the following command **before** running the script:
 ```
@@ -53,12 +53,18 @@ Note that this command is temporary and must be run again if you open a new term
 2.  Ensure your `pcd_visual` Conda environment is activated.
     
 3.  Run the main script from the terminal:
-
-        python lidar_visualization.py
-        
+```
+python lidar_visualization.py
+```        
     
     An Open3D window will open, displaying the point cloud and the detected bounding boxes.
 
+## Tested Environment Specifications
+This project was successfully tested on the following system configuration:
+
+Operating System: Ubuntu 22.04.5 LTS
+
+CPU: 11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz
 
 ## Key Technologies Used
 
