@@ -24,13 +24,19 @@ Follow these steps to set up the local development environment.
 
 ### Installation Steps
 
-1.  Clone the repository and change into the new directory: `git clone https://github.com/elsontanjunhao/pcd_visual.git` `cd pcd_visual`
+1.  Clone the repository and change into the new directory: 
+
+    git clone https://github.com/elsontanjunhao/pcd_visual.git
+    cd pcd_visual
     
-2.  Create and activate the Conda environment: `conda create --name pcd_visual python=3.10` `conda activate pcd_visual`
+2.  Create and activate the Conda environment: 
+
+    conda create --name pcd_visual python=3.10
+    conda activate pcd_visual
     
 3.  Install the required Python packages: 
 
-    pip install -r requirements.txt
+        pip install -r requirements.txt
 
 4.  (Optional) On some Linux systems, a conflict can occur between the system's C++ library and the one inside the Conda environment. This may prevent the visualization window from opening. C++ Library Error on Linux (`libstdc++.so.6`)
 
@@ -47,7 +53,7 @@ Note that this command is temporary and must be run again if you open a new term
 2.  Ensure your `pcd_visual` Conda environment is activated.
     
 3.  Run the main script from the terminal:
-    
+
         python lidar_visualization.py
         
     
