@@ -38,7 +38,11 @@ conda activate pcd_visual
 ```
 pip install -r requirements.txt
 ```
-4.  (Optional) Troubleshooting for Linux: On some Linux systems, a conflict can occur with the C++ library (libstdc++.so.6), which may prevent the visualization window from opening. To fix this for the current terminal session, run the following command before running the script:
+4.  Update your system:
+```
+sudo apt update && sudo apt upgrade -y
+```
+5.  (Optional) Troubleshooting for Linux in Conda environment: A conflict can occur with the C++ library (libstdc++.so.6), which may prevent the visualization window from opening. To fix this for the current terminal session, run the following command before running the script:
 
 To fix this for your current terminal session, run the following command **before** running the script:
 ```
