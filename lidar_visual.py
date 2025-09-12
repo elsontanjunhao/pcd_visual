@@ -79,7 +79,8 @@ def main():
     #    - Sparse outliers are removed to clean up noise from sensor errors.
     #
     # 4. Ground Plane Removal:
-    #    - The RANSAC algorithm is used to identify and remove the ground plane.
+    #    - The RANSAC algorithm is used to identify and remove the ground plane 
+    #    (labelled as grey points).
     # ==============================================================================
 
     points = read_pointcloud(file_path)
