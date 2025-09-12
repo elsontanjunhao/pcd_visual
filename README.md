@@ -12,6 +12,12 @@ This project provides a Python script to visualize Lidar point cloud data. It pr
     
 *   Visualizes the colored point cloud and bounding boxes in an interactive 3D window.
     
+## Tested Environment Specifications
+This project was successfully tested on the following system configuration:
+
+Operating System: Ubuntu 22.04.5 LTS
+
+CPU: 11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz
 
 ## Setup and Installation
 
@@ -62,13 +68,6 @@ python lidar_visualization.py
 ```        
     
 An Open3D window will open, displaying the pointcloud and the detected bounding boxes.
-
-## Tested Environment Specifications
-This project was successfully tested on the following system configuration:
-
-Operating System: Ubuntu 22.04.5 LTS
-
-CPU: 11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz
 
 ## Key Technologies Used
 
