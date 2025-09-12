@@ -69,7 +69,7 @@ python lidar_visualization.py
     
 An Open3D window will open, displaying the pointcloud and the detected bounding boxes.
 
-## Key Technologies Used
+## Libraries Used
 
 *   **Python 3.10**
     
