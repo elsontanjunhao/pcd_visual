@@ -1,4 +1,4 @@
-# lidar_visualization.py
+# lidar_visual.py
 
 # ==============================================================================
 # Frameworks and Libraries Used
@@ -53,12 +53,12 @@ def main():
     stat_outlier_std_ratio = 2.0        # Standard deviation ratio for statistical outlier removal.
     
     # --- Ground Plane (RANSAC) Parameters ---
-    ransac_distance_threshold = 0.3     # Max distance a point can be from the plane model.
+    ransac_distance_threshold = 0.25     # Max distance a point can be from the plane model.
     ransac_n = 3                        # Number of points to sample for a plane.
     ransac_num_iterations = 5000        # Number of RANSAC iterations.
 
     # --- Clustering (DBSCAN) Parameters ---
-    dbscan_eps = 0.35                    # Epsilon value (neighborhood distance).
+    dbscan_eps = 0.5                    # Epsilon value (neighborhood distance).
     dbscan_min_points = 5               # Minimum points to form a cluster.
     # ==============================================================================
 
@@ -135,7 +135,11 @@ def main():
     # ==============================================================================
     # Object Detection and 3D Bounding Boxes
     # ==============================================================================
-    # Bounding boxes are generated for each cluster found by DBSCAN.
+    # - Model Used: No pre-trained deep learning object detection model is used.
+    #
+    # In this script, "object detection" is achieved by treating each cluster
+    # found by the DBSCAN algorithm as a distinct object. Bounding boxes are then
+    # generated for each of these clusters.
     # ==============================================================================
 
     colors = np.random.rand(max_label + 2, 3)
