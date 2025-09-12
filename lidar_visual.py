@@ -43,7 +43,7 @@ def main():
     # ==============================================================================
     # Configuration Parameters
     # ==============================================================================
-    # --- Input File ---
+    # --- Load Input File ---
     file_path = '0000000001.bin'
 
     # --- Pre-processing Parameters ---
@@ -67,21 +67,18 @@ def main():
     # ==============================================================================
     # The pre-processing in this script involves the following steps:
     #
-    # 1. Loading the Data:
-    #    - The pointcloud data is loaded from the binary file specified above.
-    #
-    # 2. Distance Cropping:
+    # 1. Distance Cropping:
     #    - Points that are excessively far from the center of the entire scene
     #      are removed to focus processing on the area of interest.
     #
-    # 3. Voxel Downsampling:
+    # 2. Voxel Downsampling:
     #    - The point cloud is downsampled to reduce the number of points and
     #      create a more uniform point density.
     #
-    # 4. Statistical Outlier Removal:
+    # 3. Statistical Outlier Removal:
     #    - Sparse outliers are removed to clean up noise from sensor errors.
     #
-    # 5. Ground Plane Removal:
+    # 4. Ground Plane Removal:
     #    - The RANSAC algorithm is used to identify and remove the ground plane.
     # ==============================================================================
 
